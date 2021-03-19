@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            background-color: #24252a;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 58px;
+            color: #51abff;
+            font-family: Arial, Helvetica, sans-serif
+        }
+
+        input[type=text],
+        select {
+            height: 50px;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            width: 855px;
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            outline: 0;
+            font-size: 20px;
+
+
+        }
+
+        .center {
+
+            width: 100%;
+            display: grid;
+            padding-top: 35px;
+        }
+
+        .listed {
+            border: 3px solid #51abff;
+            border-top: none;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            text-align: left;
+            width: 849px;
+            font-family: Arial, Helvetica, sans-serif;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 20px;
+            text-align: left;
+            color: white;
+            font-weight: 700;
+        }
+
+        .button {
+            border-radius: 4px;
+            background-color: #4CAF50;
+            border: none;
+            color: #FFFFFF;
+            text-align: center;
+            font-size: 20px;
+            padding: 20px;
+            width: 200px;
+            transition: all 0.5s;
+            cursor: pointer;
+            outline: 0;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            position: relative;
+            height: 70px;
+            margin-bottom: 20px;
+
+        }
+
+        .button:hover {
+            opacity: 0.8;
+        }
+
+        .button span {
+            cursor: pointer;
+            display: inline-block;
+            position: relative;
+            transition: 0.5s;
+        }
+
+        .button span:after {
+            content: '\00bb';
+            position: absolute;
+            opacity: 0;
+            top: 0;
+            right: -20px;
+            transition: 0.5s;
+        }
+
+        .button:hover span {
+            padding-right: 25px;
+        }
+
+        .button:hover span:after {
+            opacity: 1;
+            right: 0;
+        }
+
+        .clearbutton {
+            border-radius: 4px;
+            background-color: #E95E40;
+            border: none;
+            color: #FFFFFF;
+            text-align: center;
+            font-size: 20px;
+            padding: 20px;
+            width: 200px;
+            height: 70px;
+            transition: all 0.5s;
+            cursor: pointer;
+            outline: 0;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            position: relative;
+            margin-left: auto;
+        }
+
+        .clearbutton:hover {
+            opacity: 0.7;
+        }
+
+        input[type=checkbox] {
+            transform: scale(1.5);
+            margin-left: 10px;
+        }
+
+        label {
+            padding-left: 20px;
+            text-transform: uppercase;
+
+        }
+
+        input[type=checkbox]:checked+label.strikethrough {
+            text-decoration: line-through;
+        }
+
+        p {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 18px;
+            color: white;
+            text-align:center;
+            padding-top: 250px;
+        }
+
+    </style>
+</head>
+
+<body>
+    <h1>To Do List!</h1>
+    <div class="center">
+        <input type="text" id="inputText" placeholder="What needs to be done?">
+    </div>
+    <div style="padding-bottom: 33px"> </div>
+    <!-- Spaces to populate the tasks -->
+    <div id="demo"></div>
+
+    <div class="center">
+        <button onclick="appendDiv()" id="myBtn" class="button"><span>Add Task</span></button>
+        <button onclick="clearCompleted()" id="myBtn" class="clearbutton"><span> Clear completed</span></button> 
+    </div>
+
+    <p> Made by: Bryan Guntoro </p>
+
+    <script>
+        function appendDiv() {
+            if (document.getElementById("inputText").value == "") {
+                alert("Please type a task for your to do list!")
+            } else {
+                // Create div
+                var count = document.querySelectorAll('#demo [id$=task]');
+                var text = document.getElementById("inputText").value;
+                var listed_div = document.createElement("div");
+                listed_div.setAttribute("class", "listed");
+                listed_div.setAttribute("id", (count.length + 1 + "_task")); // Unique div identifier
+                document.getElementById("demo").appendChild(listed_div);
+
+                // Create checkbox
+                var newCheckbox = document.createElement("input");
+                newCheckbox.type = "checkbox";
+                newCheckbox.value = document.getElementById("inputText").value;
+                newCheckbox.id =  (count.length + 1) + "_task"; // To check the checked boxes
+                listed_div.appendChild(newCheckbox);
+
+                // Create label
+                var label = document.createElement('label');
+                label.htmlFor = document.getElementById("inputText").value;
+                label.setAttribute("class", "strikethrough");
+                label.appendChild(document.createTextNode(document.getElementById("inputText").value));
+                label.innerHTML = document.getElementById("inputText").value;
+                listed_div.appendChild(label);
+                document.getElementById("inputText").value = "";
+
+            }
+        }
+        document.getElementById("inputText")
+            .addEventListener("keyup", function (event) {
+                event.preventDefault();
+                if (event.keyCode === 13) {
+                    document.getElementById("myBtn").click();
+                }
+            });
+
+
+        function clearCompleted() {
+            var checkedIds = getCheckedIds();
+            for (var i = 0; i<checkedIds.length; i++) {
+                var obj = document.getElementById(checkedIds[i]);
+                obj.remove();
+            }
+        }
+
+        // get the unique checked boxes
+        function getCheckedIds() {
+            var checkedCbs = document.querySelectorAll('#demo input[type="checkbox"]:checked');
+            var ids = [];
+            for (var i = 0; i < checkedCbs.length; i++) ids.push(checkedCbs[i].id);
+            return ids;
+        }
+    </script>
+    
+</body>
+
+</html>
